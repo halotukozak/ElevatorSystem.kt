@@ -1,2 +1,1 @@
-rootProject.name = "ElevatorSystem"
-
+rootProject.name = "elevatorSystem"

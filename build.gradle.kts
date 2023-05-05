@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+
 val ktorVersion = "2.0.2"
 val kotlinWrappersVersion = "1.0.0-pre.547"
 
@@ -40,6 +42,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
 
             }
         }
@@ -83,12 +86,21 @@ application {
     mainClass.set("me.elevator.application.ServerKt")
 }
 
-tasks.named<Copy>("jvmProcessResources") {
-    val jsBrowserDistribution = tasks.named("jsBrowserDistribution")
-    from(jsBrowserDistribution)
-}
 
-tasks.named<JavaExec>("run") {
+tasks.getByName<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jvmJar"))
     classpath(tasks.named<Jar>("jvmJar"))
+}
+
+tasks.getByName<Jar>("jvmJar") {
+    val taskName = if (project.hasProperty("isProduction")
+        || project.gradle.startParameter.taskNames.contains("installDist")
+    ) {
+        "jsBrowserProductionWebpack"
+    } else {
+        "jsBrowserDevelopmentWebpack"
+    }
+    val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
+    dependsOn(webpackTask) // make sure JS gets compiled first
+    from(File(webpackTask.destinationDirectory, webpackTask.outputFileName)) // bring output file along into the JAR
 }

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="elevatorSystem-jvm-1.0-SNAPSHOT">
+    <output-path>$PROJECT_DIR$/build/libs</output-path>
+    <root id="archive" name="elevatorSystem-jvm-1.0-SNAPSHOT.jar">
+      <element id="module-output" name="elevatorSystem.jvmMain" />
+    </root>
+  </artifact>
+</component>
