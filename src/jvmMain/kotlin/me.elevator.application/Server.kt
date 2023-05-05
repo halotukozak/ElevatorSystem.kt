@@ -1,6 +1,7 @@
 package me.elevator.application
 
-import Elevator
+import Config
+import model.Elevator
 import http.InitRequest
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -30,10 +31,14 @@ fun Application.myApplicationModule() {
 
     install(CORS) {
         allowMethod(HttpMethod.Get)
-        allowMethod(HttpMethod.Post)
+        allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
-        anyHost()
+        allowHeader(HttpHeaders.ContentType)
+
+        allowHost(Config.clientUrl, schemes = listOf("http", "https"))
     }
+
+
     install(Compression) {
         gzip()
     }
@@ -45,8 +50,15 @@ fun Application.myApplicationModule() {
                 ContentType.Text.Html
             )
         }
+        delete("/reset") {
+            elevatorSystem = null
+            call.respond(HttpStatusCode.NoContent)
+
+        }
+
+
         get(Elevator.path) {
-            call.respond(elevatorSystem?.status() ?: call.respond(HttpStatusCode.NotFound, "Initialize system first"))
+            call.respond(elevatorSystem?.getAllElevators() ?: call.respond(HttpStatusCode.NotFound, "Initialize system first"))
         }
         post(Elevator.initPath) {
             val request = call.receive<InitRequest>()

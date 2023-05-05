@@ -1,8 +1,10 @@
-import kotlinx.serialization.Serializable
+package model
 
+import kotlinx.serialization.Serializable
 
 @Serializable
 class Elevator {
+
     val id: Int = lastId++
 
     companion object {
@@ -10,4 +12,7 @@ class Elevator {
         const val initPath = "$path/init"
         var lastId = 1
     }
+
+    fun status(): ElevatorStatus = ElevatorStatus()
+
 }

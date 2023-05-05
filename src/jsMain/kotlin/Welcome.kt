@@ -1,4 +1,4 @@
-import kotlinx.coroutines.launch
+import emotion.react.css
 import react.FC
 import react.Props
 import react.dom.events.FormEventHandler
@@ -9,26 +9,34 @@ import react.dom.html.ReactHTML.form
 import react.dom.html.ReactHTML.h2
 import react.dom.html.ReactHTML.h4
 import react.dom.html.ReactHTML.input
+import react.useState
+import web.cssom.Visibility
 import web.html.ButtonType
 import web.html.HTMLFormElement
 import web.html.InputType
 
-external interface WelcomeProps : Props {
-    var numberOfElevators: Int
-    var numberOfFloors: Int
 
+external interface WelcomeProps : Props {
+    var isVisible: Boolean
+    var onSubmit: (Int, Int) -> Unit
 
 }
 
 val Welcome = FC<WelcomeProps> { props ->
-    var numberOfElevators = 5
-    var numberOfFloors = 5
+
+    val (numberOfElevators, setNumberOfElevators) = useState(0)
+    val (numberOfFloors, setNumberOfFloors) = useState(0)
 
     val submitHandler: FormEventHandler<HTMLFormElement> = {
         it.preventDefault()
-        scope.launch { init(props.numberOfElevators, props.numberOfFloors) }
+        props.onSubmit(numberOfElevators, numberOfFloors)
     }
+
+
     div {
+        css {
+            visibility = if (props.isVisible) null else Visibility.hidden
+        }
         form {
             onSubmit = submitHandler
 
@@ -42,11 +50,9 @@ val Welcome = FC<WelcomeProps> { props ->
             input {
                 type = InputType.number
                 value = numberOfElevators
-                min = 0
+                min = 1
                 max = Config.maxNumberOfElevators
-                onChange = { event ->
-                    numberOfElevators = event.target.value.toInt()
-                }
+                onChange = { setNumberOfElevators(it.target.value.toInt()) }
             }
 
             br
@@ -57,11 +63,9 @@ val Welcome = FC<WelcomeProps> { props ->
             input {
                 type = InputType.number
                 value = numberOfFloors
-                min = 0
+                min = 1
                 max = Config.maxNumberOfFloors
-                onChange = { event ->
-                    numberOfFloors = event.target.value.toInt()
-                }
+                onChange = { setNumberOfFloors(it.target.value.toInt()) }
             }
             button {
                 type = ButtonType.submit
@@ -69,5 +73,7 @@ val Welcome = FC<WelcomeProps> { props ->
             }
         }
     }
+
+
 }
 

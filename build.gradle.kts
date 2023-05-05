@@ -43,7 +43,6 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
-
             }
         }
         val commonTest by getting {
@@ -75,7 +74,7 @@ kotlin {
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom")
                 implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom-legacy")
-
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-emotion")
             }
         }
         val jsTest by getting
