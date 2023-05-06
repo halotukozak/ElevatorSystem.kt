@@ -11,7 +11,7 @@ import react.useContext
 val errorContext = createContext<ArrayDeque<String>>(ArrayDeque())
 
 
-val ErrorBadge = FC<Props> { props ->
+val ErrorBadge = FC<Props> {
 
     val errors = useContext(errorContext)
 

@@ -1,8 +1,8 @@
 package me.elevator.application
 
 import Config
-import model.Elevator
 import http.InitRequest
+import http.PickupRequest
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -15,6 +15,9 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.pipeline.*
+import model.Elevator
+import model.Passenger
 
 
 fun main() {
@@ -38,10 +41,7 @@ fun Application.myApplicationModule() {
         allowHost(Config.clientUrl, schemes = listOf("http", "https"))
     }
 
-
-    install(Compression) {
-        gzip()
-    }
+    install(Compression) { gzip() }
 
     routing {
         get("/") {
@@ -50,25 +50,46 @@ fun Application.myApplicationModule() {
                 ContentType.Text.Html
             )
         }
+
         delete("/reset") {
             elevatorSystem = null
             call.respond(HttpStatusCode.NoContent)
-
         }
-
 
         get(Elevator.path) {
-            call.respond(elevatorSystem?.getAllElevators() ?: call.respond(HttpStatusCode.NotFound, "Initialize system first"))
+            call.respond(
+                elevatorSystem?.getAllElevators() ?: notInitializedError()
+            )
         }
+
         post(Elevator.initPath) {
             val request = call.receive<InitRequest>()
-            if (elevatorSystem != null) call.respond(HttpStatusCode.BadRequest, "System is already initialized")
+            if (elevatorSystem != null) notInitializedError()
             elevatorSystem = ElevatorSystem(request.numberOfElevators, request.numberOfLevels)
-            call.respond(HttpStatusCode.Accepted)
+            call.respond(HttpStatusCode.OK)
         }
+
+        post(Elevator.pickupPath) {
+            val request = call.receive<PickupRequest>()
+            elevatorSystem?.let {
+                val leftPassengers: List<Passenger> = it.pickup(request.pickups)
+                if (leftPassengers.isEmpty()) call.respond(HttpStatusCode.Accepted)
+                else call.respond(HttpStatusCode.NotAcceptable, leftPassengers)
+            } ?: notInitializedError()
+        }
+
+        post("/step") {
+            elevatorSystem?.makeStep() ?: notInitializedError()
+            call.respond(HttpStatusCode.OK)
+        }
+
         static("/") {
             resources("")
         }
 
     }
+}
+
+private suspend fun PipelineContext<Unit, ApplicationCall>.notInitializedError() {
+    call.respond(HttpStatusCode.BadRequest, "System is already initialized")
 }

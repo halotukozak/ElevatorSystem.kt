@@ -3,5 +3,4 @@ package model
 import kotlinx.serialization.Serializable
 
 @Serializable
-class ElevatorStatus {
-}
+data class ElevatorStatus(val id: Int, val currentLevel: Int, val passengers: Collection<Passenger>)

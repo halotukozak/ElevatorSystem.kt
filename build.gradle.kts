@@ -3,6 +3,13 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 val ktorVersion = "2.0.2"
 val kotlinWrappersVersion = "1.0.0-pre.547"
 
+fun kotlinw(target: String) = "org.jetbrains.kotlin-wrappers:kotlin-$target"
+fun ktor(target: String) = "io.ktor:ktor-$target:$ktorVersion"
+fun ktorClient(target:String) = ktor("client-$target")
+fun ktorServer(target:String) = ktor("server-$target")
+fun kotlinx(target:String) = "org.jetbrains.kotlinx:kotlinx-$target"
+
+
 
 plugins {
     kotlin("multiplatform") version "1.8.20"
@@ -33,7 +40,7 @@ kotlin {
         browser {
             commonWebpackConfig {
                 cssSupport {
-                    enabled.set(true)
+                    enabled.set(false)
                 }
             }
         }
@@ -41,8 +48,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0")
+                implementation(kotlinx("serialization-json:1.5.0"))
+                implementation(kotlinx("coroutines-core:1.7.0"))
             }
         }
         val commonTest by getting {
@@ -53,13 +60,14 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-serialization:$ktorVersion")
-                implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation("io.ktor:ktor-server-cors:$ktorVersion")
-                implementation("io.ktor:ktor-server-compression:$ktorVersion")
-                implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-server-netty:$ktorVersion")
+                implementation(ktor("serialization"))
+                implementation(ktorServer("content-negotiation"))
+                implementation(ktor("serialization-kotlinx-json"))
+                implementation(ktorServer("cors"))
+                implementation(ktorServer("compression"))
+                implementation(ktorServer("core-jvm"))
+                implementation(ktorServer("netty"))
+
                 implementation("ch.qos.logback:logback-classic:1.4.6")
 
             }
@@ -67,14 +75,17 @@ kotlin {
         val jvmTest by getting
         val jsMain by getting {
             dependencies {
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-                implementation(project.dependencies.enforcedPlatform("org.jetbrains.kotlin-wrappers:kotlin-wrappers-bom:$kotlinWrappersVersion"))
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-react-dom-legacy")
-                implementation("org.jetbrains.kotlin-wrappers:kotlin-emotion")
+                implementation(ktorClient("js"))
+                implementation(ktorClient("content-negotiation"))
+                implementation(ktor("serialization-kotlinx-json"))
+
+                implementation(project.dependencies.enforcedPlatform(kotlinw("wrappers-bom:$kotlinWrappersVersion")))
+                implementation(kotlinw("react"))
+                implementation(kotlinw("react-dom"))
+                implementation(kotlinw("react-dom-legacy"))
+                implementation(kotlinw("emotion"))
+                implementation(kotlinw("ring-ui"))
+
             }
         }
         val jsTest by getting

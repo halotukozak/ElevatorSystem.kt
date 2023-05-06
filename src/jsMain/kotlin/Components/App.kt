@@ -8,6 +8,8 @@ import react.Props
 import react.dom.html.ReactHTML
 import react.useEffectOnce
 import react.useState
+import ringui.Alert
+import ringui.AlertType
 
 val App = FC<Props> {
     var elevatorsList: List<Elevator> by useState(emptyList())
@@ -27,8 +29,6 @@ val App = FC<Props> {
         }
         +"Reset"
     }
-
-    ErrorBadge {}
 
     Welcome {
         onSubmit = { numberOfElevators: Int, numberOfFloors: Int ->

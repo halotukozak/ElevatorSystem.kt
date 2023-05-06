@@ -4,20 +4,21 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.websocket.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import model.Elevator
 import react.useContext
 
-val jsonClient = HttpClient {
+val client = HttpClient {
     install(ContentNegotiation) {
         json()
     }
 }
 
 suspend inline fun <reified T> get(path: String): T {
-    val response = jsonClient.get(Config.serverUrl + path)
+    val response = client.get(Config.serverUrl + path)
     return if (response.status.isSuccess()) {
         response.body() as T
     } else {
@@ -27,7 +28,7 @@ suspend inline fun <reified T> get(path: String): T {
 }
 
 suspend fun post(path: String, body: Any? = null) = try {
-    jsonClient.post(Config.serverUrl + path) {
+    client.post(Config.serverUrl + path) {
         contentType(ContentType.Application.Json)
         setBody(body)
     }
@@ -36,7 +37,7 @@ suspend fun post(path: String, body: Any? = null) = try {
 }
 
 suspend fun delete(path: String, body: Any? = null) = try {
-    jsonClient.delete(Config.serverUrl + path) {
+    client.delete(Config.serverUrl + path) {
         contentType(ContentType.Application.Json)
         setBody(body)
     }
