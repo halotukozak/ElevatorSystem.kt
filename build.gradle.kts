@@ -39,7 +39,7 @@ kotlin {
         binaries.executable()
         browser {
             commonWebpackConfig {
-                cssSupport {
+                cssSupport{
                     enabled.set(false)
                 }
             }
@@ -83,8 +83,11 @@ kotlin {
                 implementation(kotlinw("react"))
                 implementation(kotlinw("react-dom"))
                 implementation(kotlinw("react-dom-legacy"))
-                implementation(kotlinw("emotion"))
+
+                implementation(npm("core-js", "3.16.2"))
                 implementation(kotlinw("ring-ui"))
+                implementation(kotlinw("emotion"))
+
 
             }
         }

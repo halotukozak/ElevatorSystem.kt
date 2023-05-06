@@ -58,7 +58,7 @@ fun Application.myApplicationModule() {
 
         get(Elevator.path) {
             call.respond(
-                elevatorSystem?.getAllElevators() ?: notInitializedError()
+                elevatorSystem?.getAllElevators()?.map { it.status() } ?: notInitializedError()
             )
         }
 

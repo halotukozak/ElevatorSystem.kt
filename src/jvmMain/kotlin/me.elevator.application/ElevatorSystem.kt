@@ -21,8 +21,9 @@ class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int) {
                         pickup.direction
                     )
                 }
-
             elevator?.pickup(passenger = pickup.passenger) ?: leftPassengers.add(pickup.passenger)
+            TODO()
+
         }
 
         return leftPassengers
