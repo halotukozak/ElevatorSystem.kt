@@ -87,9 +87,8 @@ kotlin {
                 implementation(npm("core-js", "3.16.2"))
                 implementation(kotlinw("ring-ui"))
                 implementation(kotlinw("emotion"))
-
-
             }
+
         }
         val jsTest by getting
     }

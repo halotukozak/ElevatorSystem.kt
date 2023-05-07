@@ -4,38 +4,78 @@ import emotion.react.css
 import model.ElevatorStatus
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.h2
-import react.dom.html.ReactHTML.h3
-import react.dom.html.ReactHTML.span
-import web.cssom.ClassName
-import web.cssom.Color
+import react.dom.html.ReactHTML.i
+import ringui.*
+import web.cssom.*
 
 external interface ElevatorListProps : Props {
     var elevators: List<ElevatorStatus>
+    var numberOfFloors: Int
 }
 
 val ElevatorList = FC<ElevatorListProps> { props ->
-    div {
-        className = ClassName("shaft")
-        props.elevators.forEachIndexed { index, item ->
-            div {
-                h3 { +"Elevator $index" }
-                h2 {
-                    +"Current floor ${item.currentLevel}"
+    Grid {
+        Row {
+            around = RowPosition.xs
+            css {
+                borderBottom = Border(1.px, LineStyle.solid)
+                height = 80.vh / props.numberOfFloors
+            }
+            props.elevators.forEach { item ->
+                Col {
+                    h2 {
+                        css {
+                            fontSize = FontSize.xxLarge
+                        }
+                        +"${item.currentLevel}"
+                    }
                 }
-                h2 {
-                    repeat(item.passengers.size) {
-                        span {
-                            css {
-                                color = Color("red")
-                            }
-                            +"*"
+            }
+            Col {
+                Button {
+//                    i {
+//                        className = ClassName("fa-regular fa-forward-step")
+//                    }
+                    +"➤"
+                }
+            }
+        }
+
+        for (i in 0..props.numberOfFloors) {
+            Row {
+                around = RowPosition.xs
+                css {
+                    borderBottom = Border(1.px, LineStyle.solid)
+                    height = 70.vh / props.numberOfFloors
+                }
+                props.elevators.forEachIndexed { index, item ->
+                    Col {
+                        if (i == item.currentLevel)
+//                            i {
+//                                className = ClassName("fa-solid fa-rectangle-vertical")
+//                            }
+                        Heading{
+                            +"⌷"
                         }
                     }
                 }
-
-
+                Col {
+                    ButtonGroup {
+                        Button {
+//                            i {
+//                                className = ClassName("fa-regular fa-arrow-up")
+//                            }
+                            +"↑"
+                        }
+                        Button {
+//                            i {
+//                                className = ClassName("fa-regular fa-arrow-down")
+//                            }
+                            +"↓"
+                        }
+                    }
+                }
             }
         }
     }

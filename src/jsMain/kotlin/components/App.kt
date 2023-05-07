@@ -5,16 +5,17 @@ import kotlinx.coroutines.launch
 import model.ElevatorStatus
 import react.FC
 import react.Props
-import react.useEffectOnce
 import react.useState
 import ringui.*
+import web.cssom.FontFamily
 import web.cssom.px
 
 val App = FC<Props> {
     var elevatorsStatus: List<ElevatorStatus> by useState(emptyList())
     var isInitialized by useState(false)
+    var numberOfFloorsInput by useState(0)
 
-    useEffectOnce { scope.launch { reset() } }
+//    useEffectOnce { scope.launch { reset() } }
 
     Header {
         theme = "light"
@@ -23,6 +24,7 @@ val App = FC<Props> {
             css {
                 paddingTop = 10.px
                 paddingBottom = 10.px
+                fontFamily = FontFamily.monospace
             }
             +"Elevator system"
         }
@@ -48,6 +50,7 @@ val App = FC<Props> {
             onSubmit = { numberOfElevators: Int, numberOfFloors: Int ->
                 scope.launch {
                     init(numberOfElevators, numberOfFloors)
+                    numberOfFloorsInput = numberOfFloors
                     isInitialized = true
                     elevatorsStatus = getStatus()
                 }
@@ -60,6 +63,7 @@ val App = FC<Props> {
     if (elevatorsStatus.isNotEmpty()) {
         ElevatorList {
             elevators = elevatorsStatus
+            numberOfFloors = numberOfFloorsInput
         }
     }
 }

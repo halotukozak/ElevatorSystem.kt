@@ -6,6 +6,7 @@ import react.FC
 import react.Props
 import react.dom.html.ReactHTML.form
 import react.dom.html.ReactHTML.input
+import react.dom.html.ReactHTML.span
 import react.useState
 import ringui.*
 import web.cssom.Display
@@ -29,25 +30,23 @@ val Welcome = FC<WelcomeProps> { props ->
     }
 
     form {
-        Island {
+        AdaptiveIsland {
             IslandHeader {
-                Heading { +"Hello, pick number of elevators and floors" }
+                border = true
+                +"Hello, pick number of elevators and floors"
             }
             IslandContent {
                 Grid {
                     Row {
+                        between = RowPosition.xs
                         Col {
-                            Heading {
-                                css { display = Display.inlineBlock }
-                                level = 3
+                            span {
+
                                 +"Enter number of elevators"
                             }
                         }
 
                         Col {
-                            css {
-                                display = Display.flex
-                            }
                             input {
                                 type = InputType.number
                                 value = numberOfElevators
@@ -60,13 +59,13 @@ val Welcome = FC<WelcomeProps> { props ->
 
 
                     Row {
+                        between = RowPosition.xs
                         Col {
-                            Heading {
-                                css { display = Display.inlineBlock }
-                                level = 3
+                            span {
                                 +"Enter number of floors"
                             }
                         }
+
                         Col {
                             input {
                                 type = InputType.number
@@ -77,6 +76,7 @@ val Welcome = FC<WelcomeProps> { props ->
                             }
                         }
                     }
+
                     Row {
                         Button {
                             css {
@@ -88,7 +88,6 @@ val Welcome = FC<WelcomeProps> { props ->
                         }
                     }
                 }
-
             }
         }
     }
