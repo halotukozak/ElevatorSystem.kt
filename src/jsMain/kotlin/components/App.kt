@@ -1,10 +1,12 @@
 import components.ElevatorList
 import components.Welcome
 import emotion.react.css
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import model.ElevatorStatus
 import react.FC
 import react.Props
+import react.useEffectOnce
 import react.useState
 import ringui.*
 import web.cssom.FontFamily
@@ -15,7 +17,7 @@ val App = FC<Props> {
     var isInitialized by useState(false)
     var numberOfFloorsInput by useState(0)
 
-//    useEffectOnce { scope.launch { reset() } }
+    useEffectOnce { scope.launch { reset() } }
 
     Header {
         theme = "light"
@@ -63,6 +65,11 @@ val App = FC<Props> {
     if (elevatorsStatus.isNotEmpty()) {
         ElevatorList {
             elevators = elevatorsStatus
+            updateStatus = {
+                scope.launch {
+                    async { elevatorsStatus = getStatus() }.await()
+                }
+            }
             numberOfFloors = numberOfFloorsInput
         }
     }

@@ -32,8 +32,13 @@ data class Elevator(private var currentFloor: Int = 0) {
     fun pickup(passenger: Passenger) {
         passengers.pickUp(passenger)
         if (direction == null) {
-            direction = if (passenger.destination > currentFloor) UP
-            else DOWN
+            direction = if (passenger.startingFloor != currentFloor) {
+                if (passenger.startingFloor > currentFloor) UP
+                else DOWN
+            }else{
+                if (passenger.destination > currentFloor) UP
+                else DOWN
+            }
         }
     }
 
@@ -43,16 +48,16 @@ data class Elevator(private var currentFloor: Int = 0) {
                 currentFloor--
                 passengers.dropOff(currentFloor)
 
-                val minFloor = passengers.peekMinFloor()
-                minFloor?.let { if (it > currentFloor) changeDirection() } ?: stop()
+                val minFloor = passengers.getMin()
+                minFloor?.let { if (it >= currentFloor) changeDirection() } ?: stop()
             }
 
             UP -> {
                 currentFloor++
                 passengers.dropOff(currentFloor)
 
-                val maxFloor = passengers.peekMaxFloor()
-                maxFloor?.let { if (maxFloor < currentFloor) changeDirection() } ?: stop()
+                val maxFloor = passengers.getMax()
+                maxFloor?.let { if (it <= currentFloor) changeDirection() } ?: stop()
             }
 
             null -> {}
@@ -74,8 +79,8 @@ data class Elevator(private var currentFloor: Int = 0) {
 
     //    The Elevator metrics, which doesn't fill metrics conditions
     fun calcDistance(passengerFloor: Int, passengerDirection: Direction): Int {
-        val minFloor = passengers.peekMinFloor() ?: -1
-        val maxFloor = passengers.peekMaxFloor() ?: -1
+        val minFloor = passengers.getAbsoluteMin() ?: -1
+        val maxFloor = passengers.getAbsoluteMax() ?: -1
 
         val minToMax = abs(maxFloor - minFloor)
         return when (this.direction) {

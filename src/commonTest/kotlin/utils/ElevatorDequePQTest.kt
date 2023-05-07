@@ -27,27 +27,27 @@ class ElevatorDequePQTest {
     }
 
     @Test
-    fun peekMinFloor() {
-        assertEquals(null, ElevatorDequePQ().peekMinFloor())
+    fun getAbsoluteMin() {
+        assertEquals(null, ElevatorDequePQ().getAbsoluteMin())
         val tmp = ElevatorDequePQ()
         tmp.pickUp(Passenger(0, 1))
-        assertEquals(1, tmp.peekMinFloor())
+        assertEquals(0, tmp.getAbsoluteMin())
         tmp.pickUp(Passenger(0, 1))
-        assertEquals(1, tmp.peekMinFloor())
+        assertEquals(0, tmp.getAbsoluteMin())
         tmp.pickUp(Passenger(0, 0))
-        assertEquals(0, tmp.peekMinFloor())
+        assertEquals(0, tmp.getAbsoluteMin())
     }
 
     @Test
-    fun peekMaxFloor() {
-        assertEquals(null, ElevatorDequePQ().peekMaxFloor())
+    fun getAbsoluteMax() {
+        assertEquals(null, ElevatorDequePQ().getAbsoluteMax())
         val tmp = ElevatorDequePQ()
         tmp.pickUp(Passenger(0, 1))
-        assertEquals(1, tmp.peekMaxFloor())
+        assertEquals(1, tmp.getAbsoluteMax())
         tmp.pickUp(Passenger(0, 1))
-        assertEquals(1, tmp.peekMaxFloor())
+        assertEquals(1, tmp.getAbsoluteMax())
         tmp.pickUp(Passenger(0, 0))
-        assertEquals(1, tmp.peekMaxFloor())
+        assertEquals(1, tmp.getAbsoluteMax())
     }
 
     @Test

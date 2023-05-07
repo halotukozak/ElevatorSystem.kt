@@ -9,6 +9,8 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import model.Elevator
 import model.ElevatorStatus
+import model.Passenger
+import model.Pickup
 import react.useContext
 
 val client = HttpClient {
@@ -52,6 +54,10 @@ suspend fun init(numberOfElevators: Int, numberOfFloors: Int) {
 
 suspend fun getStatus(): List<ElevatorStatus> = get(Elevator.path)
 suspend fun reset() = delete("/reset")
-suspend fun pickup(elevator: Elevator, level: Int, direction: Direction) {
-    post(Elevator.initPath, mapOf("elevator" to elevator, "level" to level, "direction" to direction))
+suspend fun pickup(floor: Int, destination:Int, direction: Direction) {
+    post(Elevator.pickupPath, Pickup(Passenger(floor, destination), floor, direction))
+}
+
+suspend fun step() {
+    post("/step")
 }

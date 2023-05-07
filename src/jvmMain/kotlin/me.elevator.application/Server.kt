@@ -2,7 +2,6 @@ package me.elevator.application
 
 import Config
 import http.InitRequest
-import http.PickupRequest
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -17,7 +16,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.pipeline.*
 import model.Elevator
-import model.Passenger
+import model.Pickup
 
 
 fun main() {
@@ -57,9 +56,7 @@ fun Application.myApplicationModule() {
         }
 
         get(Elevator.path) {
-            call.respond(
-                elevatorSystem?.getAllElevators()?.map { it.status() } ?: notInitializedError()
-            )
+            call.respond(elevatorSystem?.status() ?: notInitializedError())
         }
 
         post(Elevator.initPath) {
@@ -70,11 +67,10 @@ fun Application.myApplicationModule() {
         }
 
         post(Elevator.pickupPath) {
-            val request = call.receive<PickupRequest>()
+            val request = call.receive<Pickup>()
             elevatorSystem?.let {
-                val leftPassengers: List<Passenger> = it.pickup(request.pickups)
-                if (leftPassengers.isEmpty()) call.respond(HttpStatusCode.Accepted)
-                else call.respond(HttpStatusCode.NotAcceptable, leftPassengers)
+                if (it.pickup(request)) call.respond(HttpStatusCode.Accepted)
+                else call.respond(HttpStatusCode.NotAcceptable)
             } ?: notInitializedError()
         }
 
