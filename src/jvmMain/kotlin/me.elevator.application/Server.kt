@@ -1,6 +1,5 @@
 package me.elevator.application
 
-import Config
 import http.InitRequest
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -20,7 +19,12 @@ import model.Pickup
 
 
 fun main() {
-    embeddedServer(Netty, port = System.getenv("PORT").toInt(), host = System.getenv("HOST"), module = Application::myApplicationModule).start(wait = true)
+    embeddedServer(
+        Netty,
+        port = System.getenv("PORT").toInt(),
+        host = System.getenv("HOST"),
+        module = Application::myApplicationModule
+    ).start(wait = true)
 }
 
 fun Application.myApplicationModule() {
@@ -62,7 +66,7 @@ fun Application.myApplicationModule() {
         post(Elevator.initPath) {
             val request = call.receive<InitRequest>()
             if (elevatorSystem != null) notInitializedError()
-            elevatorSystem = ElevatorSystem(request.numberOfElevators, request.numberOfLevels)
+            elevatorSystem = ElevatorSystem(request.numberOfElevators)
             call.respond(HttpStatusCode.OK)
         }
 

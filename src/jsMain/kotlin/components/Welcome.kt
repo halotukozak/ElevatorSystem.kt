@@ -21,8 +21,8 @@ external interface WelcomeProps : Props {
 
 val Welcome = FC<WelcomeProps> { props ->
 
-    val (numberOfElevators, setNumberOfElevators) = useState(3)
-    val (numberOfFloors, setNumberOfFloors) = useState(10)
+    val (numberOfElevators, setNumberOfElevators) = useState(Config.initialNumberOfElevators)
+    val (numberOfFloors, setNumberOfFloors) = useState(Config.initialNumberOfFloors)
 
     val submitHandler = {
         props.onSubmit(numberOfElevators, numberOfFloors)

@@ -4,10 +4,9 @@ import model.Elevator
 import model.ElevatorStatus
 import model.Pickup
 
-class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int) {
+class ElevatorSystem(numberOfElevators: Int) {
     private var elevators: List<Elevator> = List(numberOfElevators) { Elevator() }
 
-    val numberOfLevels: Int = 0
     fun pickup(pickup: Pickup): Boolean {
         val freeElevators = elevators.filter { it.canPickup() }
         val elevator = freeElevators.minByOrNull { it.calcDistance(pickup.currentFloor, pickup.direction) }

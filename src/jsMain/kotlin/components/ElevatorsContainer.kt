@@ -98,7 +98,7 @@ val ElevatorList = FC<ElevatorListProps> { props ->
                                 }
                                 Heading {
                                     level = 4
-                                    +("*".repeat(props.elevators.sumOf { e -> e.passengers.count { it.isWaiting && it.startingFloor == i } })).toString()
+                                    +("*".repeat(props.elevators.sumOf { e -> e.passengers.count { it.isWaiting && it.startingFloor == i } }))
                                 }
                             }
                         }

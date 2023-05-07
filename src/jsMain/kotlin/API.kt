@@ -13,7 +13,6 @@ import model.Passenger
 import model.Pickup
 import react.useContext
 import web.location.location
-import web.window.window
 
 val client = HttpClient {
     install(ContentNegotiation) {
@@ -58,7 +57,7 @@ suspend fun init(numberOfElevators: Int, numberOfFloors: Int) {
 
 suspend fun getStatus(): List<ElevatorStatus> = get(Elevator.path)
 suspend fun reset() = delete("/reset")
-suspend fun pickup(floor: Int, destination:Int, direction: Direction) {
+suspend fun pickup(floor: Int, destination: Int, direction: Direction) {
     post(Elevator.pickupPath, Pickup(Passenger(floor, destination), floor, direction))
 }
 

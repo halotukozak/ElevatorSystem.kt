@@ -1,10 +1,8 @@
 package components
 
-import emotion.react.css
 import react.FC
 import react.Props
 import ringui.*
-import web.cssom.px
 
 external interface FloorPickerProps : Props {
     var floorsRange: IntRange
