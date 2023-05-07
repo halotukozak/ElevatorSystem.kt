@@ -4,7 +4,6 @@ import Config
 import emotion.react.css
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML.form
 import react.dom.html.ReactHTML.input
 import react.dom.html.ReactHTML.span
 import react.useState
@@ -29,63 +28,61 @@ val Welcome = FC<WelcomeProps> { props ->
         props.onSubmit(numberOfElevators, numberOfFloors)
     }
 
-    form {
-        AdaptiveIsland {
-            IslandHeader {
-                border = true
-                +"Hello, pick number of elevators and floors"
-            }
-            IslandContent {
-                Grid {
-                    Row {
-                        between = RowPosition.xs
-                        Col {
-                            span {
+    AdaptiveIsland {
+        IslandHeader {
+            border = true
+            +"Hello, pick number of elevators and floors"
+        }
+        IslandContent {
+            Grid {
+                Row {
+                    between = RowPosition.xs
+                    Col {
+                        span {
 
-                                +"Enter number of elevators"
-                            }
-                        }
-
-                        Col {
-                            input {
-                                type = InputType.number
-                                value = numberOfElevators
-                                min = 1
-                                max = Config.maxNumberOfElevators
-                                onChange = { setNumberOfElevators(it.target.value.toInt()) }
-                            }
+                            +"Enter number of elevators"
                         }
                     }
 
-
-                    Row {
-                        between = RowPosition.xs
-                        Col {
-                            span {
-                                +"Enter number of floors"
-                            }
+                    Col {
+                        input {
+                            type = InputType.number
+                            value = numberOfElevators
+                            min = 1
+                            max = Config.maxNumberOfElevators
+                            onChange = { setNumberOfElevators(it.target.value.toInt()) }
                         }
+                    }
+                }
 
-                        Col {
-                            input {
-                                type = InputType.number
-                                value = numberOfFloors
-                                min = 1
-                                max = Config.maxNumberOfFloors
-                                onChange = { setNumberOfFloors(it.target.value.toInt()) }
-                            }
+
+                Row {
+                    between = RowPosition.xs
+                    Col {
+                        span {
+                            +"Enter number of floors"
                         }
                     }
 
-                    Row {
-                        Button {
-                            css {
-                                margin = Margin(vertical = 10.px, horizontal = 0.px)
-                                display = Display.block
-                            }
-                            onMouseDown = { submitHandler() }
-                            +"Submit"
+                    Col {
+                        input {
+                            type = InputType.number
+                            value = numberOfFloors
+                            min = 1
+                            max = Config.maxNumberOfFloors
+                            onChange = { setNumberOfFloors(it.target.value.toInt()) }
                         }
+                    }
+                }
+
+                Row {
+                    Button {
+                        css {
+                            margin = Margin(vertical = 10.px, horizontal = 0.px)
+                            display = Display.block
+                        }
+                        onMouseDown = { submitHandler() }
+                        +"Submit"
                     }
                 }
             }

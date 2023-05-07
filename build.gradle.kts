@@ -116,3 +116,7 @@ tasks.getByName<Jar>("jvmJar") {
     dependsOn(webpackTask) // make sure JS gets compiled first
     from(File(webpackTask.destinationDirectory, webpackTask.outputFileName)) // bring output file along into the JAR
 }
+
+tasks.register("stage") {
+    dependsOn("build")
+}

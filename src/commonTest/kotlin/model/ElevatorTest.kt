@@ -8,7 +8,7 @@ class ElevatorTest {
     private val groundFloor = 0
     private val lastFloor = 10
 
-    private val passengerWithFloors = (groundFloor..lastFloor).map { index -> Passenger(-1, index) }
+    private val passengerWithFloors = (groundFloor..lastFloor).map { index -> Passenger(index, index) }
 
     private fun EmptyElevator(floor: Int): Elevator = Elevator(floor)
     private fun UpElevator(floor: Int): Elevator {

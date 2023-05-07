@@ -1,26 +1,41 @@
 package components
 
+import Direction.DOWN
+import Direction.UP
 import emotion.react.css
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import model.ElevatorStatus
+import pickup
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML.h2
-import react.dom.html.ReactHTML.i
+import react.useState
 import ringui.*
-import web.cssom.*
+import scope
+import step
+import web.cssom.Border
+import web.cssom.FontSize
+import web.cssom.LineStyle
+import web.cssom.px
 
 external interface ElevatorListProps : Props {
     var elevators: List<ElevatorStatus>
     var numberOfFloors: Int
+    var updateStatus: () -> Unit
 }
 
 val ElevatorList = FC<ElevatorListProps> { props ->
+    val floors = (0..props.numberOfFloors)
+    var pickingFloor by useState(false)
+    var currFloor by useState(-1)
+    var currDirection by useState(UP)
+
     Grid {
         Row {
             around = RowPosition.xs
             css {
                 borderBottom = Border(1.px, LineStyle.solid)
-                height = 80.vh / props.numberOfFloors
             }
             props.elevators.forEach { item ->
                 Col {
@@ -33,50 +48,109 @@ val ElevatorList = FC<ElevatorListProps> { props ->
                 }
             }
             Col {
+                xs = 1
                 Button {
-//                    i {
-//                        className = ClassName("fa-regular fa-forward-step")
-//                    }
-                    +"➤"
+                    +"step ➤"
+                    primary = true
+                    onMouseDown = {
+                        scope.launch {
+                            async { step() }.await()
+                            props.updateStatus()
+                        }
+                    }
                 }
             }
         }
 
-        for (i in 0..props.numberOfFloors) {
+        floors.reversed().forEach { i ->
             Row {
                 around = RowPosition.xs
                 css {
                     borderBottom = Border(1.px, LineStyle.solid)
-                    height = 70.vh / props.numberOfFloors
                 }
-                props.elevators.forEachIndexed { index, item ->
+                props.elevators.forEach { item ->
                     Col {
                         if (i == item.currentLevel)
-//                            i {
-//                                className = ClassName("fa-solid fa-rectangle-vertical")
-//                            }
-                        Heading{
-                            +"⌷"
-                        }
+                            Heading { +("[" + ("*".repeat(item.passengers.count { !it.isWaiting })) + "]") }
                     }
                 }
                 Col {
-                    ButtonGroup {
-                        Button {
-//                            i {
-//                                className = ClassName("fa-regular fa-arrow-up")
-//                            }
-                            +"↑"
+                    xs = 1
+                    Grid {
+                        Row {
+                            Col {
+                                css {
+                                    marginBottom = 0.px
+                                }
+                                Button {
+                                    +"↑"
+                                    onMouseDown = {
+                                        currFloor = i
+                                        pickingFloor = true
+                                        currDirection = UP
+                                    }
+                                }
+                            }
+                            Col {
+                                css {
+                                    marginBottom = 0.px
+                                    marginLeft = 3.px
+                                }
+                                Heading {
+                                    level = 4
+                                    +("*".repeat(props.elevators.sumOf { e -> e.passengers.count { it.isWaiting && it.startingFloor == i } })).toString()
+                                }
+                            }
                         }
-                        Button {
-//                            i {
-//                                className = ClassName("fa-regular fa-arrow-down")
-//                            }
-                            +"↓"
+
+                        Row {
+                            Col {
+                                css {
+                                    marginTop = 0.px
+                                }
+                                Button {
+                                    +"↓"
+                                    onMouseDown = {
+                                        currFloor = i
+                                        pickingFloor = true
+                                        currDirection = DOWN
+                                    }
+                                }
+                            }
+                            Col {
+                                css {
+                                    marginTop = 0.px
+                                    marginLeft = 3.px
+                                }
+                                Heading {
+                                    level = 3
+                                    +"floor $i "
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
+
+    Dialog {
+        show = pickingFloor
+        css {
+            width = null
+        }
+        FloorPicker {
+            floorsRange = floors
+            onSubmit = { floor ->
+                scope.launch {
+                    pickup(currFloor, floor, currDirection)
+                    pickingFloor = false
+                    props.updateStatus()
+                }
+            }
+        }
+    }
 }
+
+
+
