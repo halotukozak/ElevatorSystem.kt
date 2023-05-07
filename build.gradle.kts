@@ -5,9 +5,9 @@ val kotlinWrappersVersion = "1.0.0-pre.547"
 
 fun kotlinw(target: String) = "org.jetbrains.kotlin-wrappers:kotlin-$target"
 fun ktor(target: String) = "io.ktor:ktor-$target:$ktorVersion"
-fun ktorClient(target:String) = ktor("client-$target")
-fun ktorServer(target:String) = ktor("server-$target")
-fun kotlinx(target:String) = "org.jetbrains.kotlinx:kotlinx-$target"
+fun ktorClient(target: String) = ktor("client-$target")
+fun ktorServer(target: String) = ktor("server-$target")
+fun kotlinx(target: String) = "org.jetbrains.kotlinx:kotlinx-$target"
 
 
 
@@ -15,7 +15,6 @@ plugins {
     kotlin("multiplatform") version "1.8.20"
     application
     kotlin("plugin.serialization") version "1.8.20"
-
 }
 
 group = "me.elevator"
@@ -37,8 +36,11 @@ kotlin {
     js(IR) {
         binaries.executable()
         browser {
+            testTask {
+                enabled = false
+            }
             commonWebpackConfig {
-                cssSupport{
+                cssSupport {
                     enabled.set(false)
                 }
             }
@@ -116,6 +118,18 @@ tasks.getByName<Jar>("jvmJar") {
     from(File(webpackTask.destinationDirectory, webpackTask.outputFileName)) // bring output file along into the JAR
 }
 
+distributions {
+    main {
+        contents {
+            from("$buildDir/libs") {
+                rename("${rootProject.name}-jvm", rootProject.name)
+                into("lib")
+            }
+        }
+    }
+}
+
 tasks.register("stage") {
+    dependsOn(tasks.getByName("installDist"))
     dependsOn("build")
 }

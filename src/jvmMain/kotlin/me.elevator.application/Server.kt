@@ -21,8 +21,7 @@ import model.Pickup
 fun main() {
     embeddedServer(
         Netty,
-        port = System.getenv("PORT").toInt(),
-        host = System.getenv("HOST"),
+        port = 8000,
         module = Application::myApplicationModule
     ).start(wait = true)
 }
