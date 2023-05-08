@@ -40,6 +40,7 @@ fun Application.myApplicationModule() {
         allowMethod(HttpMethod.Delete)
         allowHeader(HttpHeaders.ContentType)
 
+        anyHost()
 //        allowHost(System.getenv("HOST"), schemes = listOf("http", "https"))
     }
 
