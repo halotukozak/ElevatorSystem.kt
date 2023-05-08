@@ -1,1 +1,1 @@
-web: java -Xms2048M -jar build/libs/elevatorSystem-all.jar
+web: java -Xms256M -jar build/libs/elevatorSystem-all.jar
