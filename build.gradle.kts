@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+import com.google.cloud.tools.gradle.appengine.appyaml.AppEngineAppYamlExtension
+
 
 
 val ktorVersion = "2.0.2"
@@ -16,6 +18,9 @@ plugins {
     kotlin("multiplatform") version "1.8.20"
     application
     kotlin("plugin.serialization") version "1.8.20"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.google.cloud.tools.appengine") version "2.4.2"
+
 }
 
 group = "me.elevator"
