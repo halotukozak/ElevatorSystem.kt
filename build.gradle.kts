@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
+
 val ktorVersion = "2.0.2"
 val kotlinWrappersVersion = "1.0.0-pre.547"
 
@@ -132,8 +133,4 @@ distributions {
 tasks.register("stage") {
     dependsOn(tasks.getByName("installDist"))
     dependsOn("build")
-
-    doLast {
-//        delete(fileTree("build").exclude("build/install"))
-    }
 }
