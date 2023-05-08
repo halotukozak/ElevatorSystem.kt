@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 
-
 val ktorVersion = "2.0.2"
 val kotlinWrappersVersion = "1.0.0-pre.547"
 
@@ -18,6 +17,8 @@ plugins {
     application
     kotlin("plugin.serialization") version "1.8.20"
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("io.ktor.plugin") version "2.3.0"
+
 }
 
 group = "me.elevator"
@@ -135,4 +136,15 @@ distributions {
 tasks.register("stage") {
     dependsOn(tasks.getByName("installDist"))
     dependsOn("build")
+}
+ktor {
+    docker {
+        externalRegistry.set(
+            io.ktor.plugin.features.DockerImageRegistry.dockerHub(
+                appName = provider { "ktor-app" },
+                username = providers.environmentVariable("DOCKER_HUB_USERNAME"),
+                password = providers.environmentVariable("DOCKER_HUB_PASSWORD")
+            )
+        )
+    }
 }
