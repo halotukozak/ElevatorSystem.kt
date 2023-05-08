@@ -13,7 +13,6 @@ import model.Passenger
 import model.Pickup
 import react.useContext
 import web.location.location
-import web.window.window
 
 val client = HttpClient {
     install(ContentNegotiation) {
