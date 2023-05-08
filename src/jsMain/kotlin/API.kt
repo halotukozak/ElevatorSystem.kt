@@ -13,6 +13,7 @@ import model.Passenger
 import model.Pickup
 import react.useContext
 import web.location.location
+import web.window.window
 
 val client = HttpClient {
     install(ContentNegotiation) {
@@ -20,8 +21,7 @@ val client = HttpClient {
     }
 }
 
-//val serverUrl = "http://0.0.0.0:8000"
-val serverUrl = "https://elevator-system.herokuapp.com"
+val serverUrl = location.href
 
 suspend inline fun <reified T> get(path: String): T {
     val response = client.get(serverUrl + path)
