@@ -1,1 +1,7 @@
 /src/commonTest/kotlin
+/.git
+/.idea
+/src
+/build/classes
+/build/libs
+/build/tmp

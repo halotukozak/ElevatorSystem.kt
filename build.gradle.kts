@@ -132,4 +132,8 @@ distributions {
 tasks.register("stage") {
     dependsOn(tasks.getByName("installDist"))
     dependsOn("build")
+
+    doLast {
+//        delete(fileTree("build").exclude("build/install"))
+    }
 }

@@ -14,8 +14,7 @@ data class Passenger(val startingFloor: Int, val destination: Int) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Passenger) return false
-        val o = other as Passenger
-        return this.id == o.id
+        return this.id == other.id
     }
 
     override fun hashCode(): Int {
