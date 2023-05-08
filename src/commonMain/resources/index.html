@@ -7,9 +7,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300&display=swap" rel="stylesheet">
 </head>
-<style> * {
-    font-family: 'JetBrains Mono', monospace !important;
-}</style>
+<style>
+    * {
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+
+    .floorPicker > *  [class^="container-fluid"] {
+        min-width: 0;
+    }
+    .floorDialog > * [class^="island"] {
+        width: auto;
+    }
+</style>
 
 <body>
 

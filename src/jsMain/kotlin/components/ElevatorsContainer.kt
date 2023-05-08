@@ -14,10 +14,7 @@ import react.useState
 import ringui.*
 import scope
 import step
-import web.cssom.Border
-import web.cssom.FontSize
-import web.cssom.LineStyle
-import web.cssom.px
+import web.cssom.*
 
 external interface ElevatorListProps : Props {
     var elevators: List<ElevatorStatus>
@@ -50,6 +47,10 @@ val ElevatorList = FC<ElevatorListProps> { props ->
             Col {
                 xs = 1
                 Button {
+                    css{
+                        fontSize = FontSize.large
+                        height = 50.px
+                    }
                     +"step ➤"
                     primary = true
                     onMouseDown = {
@@ -71,7 +72,12 @@ val ElevatorList = FC<ElevatorListProps> { props ->
                 props.elevators.forEach { item ->
                     Col {
                         if (i == item.currentLevel)
-                            Heading { +("[" + ("*".repeat(item.passengers.count { !it.isWaiting })) + "]") }
+                            Heading {
+                                css {
+                                    width = 0.px
+                                }
+                                +("[" + ("*".repeat(item.passengers.count { !it.isWaiting })) + "]")
+                            }
                     }
                 }
                 Col {
@@ -136,9 +142,7 @@ val ElevatorList = FC<ElevatorListProps> { props ->
 
     Dialog {
         show = pickingFloor
-        css {
-            width = null
-        }
+        className = ClassName("floorDialog")
         FloorPicker {
             floorsRange = floors
             onSubmit = { floor ->

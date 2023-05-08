@@ -2,5 +2,17 @@
 /.git
 /.idea
 /build/classes
+/build/compileSync
+/build/developmentExecutable
+/build/distributions
+/build/js
+/build/klib
+/build/kotlin
+/build/kotlinProjectStructureMetadata
+/build/kotlinTransformedMetadataLibraries
 /build/libs
+/build/processedResources
+/build/reports
+/build/snapshot
+/build/test-results
 /build/tmp

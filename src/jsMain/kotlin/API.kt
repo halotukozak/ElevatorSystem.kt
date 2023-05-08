@@ -20,7 +20,8 @@ val client = HttpClient {
     }
 }
 
-val serverUrl = "https://dashboard.heroku.com:8000"
+//val serverUrl = "http://0.0.0.0:8000"
+val serverUrl = "https://elevator-system.herokuapp.com"
 
 suspend inline fun <reified T> get(path: String): T {
     val response = client.get(serverUrl + path)
