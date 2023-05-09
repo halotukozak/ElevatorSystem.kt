@@ -87,7 +87,7 @@ fun Application.myApplicationModule() {
         }
 
         static("/") {
-            resources("resources")
+            resources("")
         }
 
     }
