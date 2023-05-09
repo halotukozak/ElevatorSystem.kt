@@ -26,9 +26,10 @@ fun main() {
     ).start(wait = true)
 }
 
+
 fun Application.myApplicationModule() {
 
-    var elevatorSystem: ElevatorSystem? = null
+    val elevatorSystems = ElevatorSystemStorage()
 
     install(ContentNegotiation) {
         json()
@@ -39,9 +40,9 @@ fun Application.myApplicationModule() {
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
         allowHeader(HttpHeaders.ContentType)
+        allowHeader("user-id")
 
         anyHost()
-//        allowHost(System.getenv("HOST"), schemes = listOf("http", "https"))
     }
 
     install(Compression) { gzip() }
@@ -55,23 +56,24 @@ fun Application.myApplicationModule() {
         }
 
         delete("/reset") {
-            elevatorSystem = null
+            elevatorSystems.removeElevatorSystem(userSession())
             call.respond(HttpStatusCode.NoContent)
         }
 
         get(Elevator.path) {
+            val elevatorSystem = elevatorSystems.getElevatorSystem(userSession())
             call.respond(elevatorSystem?.status() ?: notInitializedError())
         }
 
         post(Elevator.initPath) {
             val request = call.receive<InitRequest>()
-            if (elevatorSystem != null) notInitializedError()
-            elevatorSystem = ElevatorSystem(request.numberOfElevators)
+            elevatorSystems.addElevatorSystem(request.numberOfElevators, userSession())
             call.respond(HttpStatusCode.OK)
         }
 
         post(Elevator.pickupPath) {
             val request = call.receive<Pickup>()
+            val elevatorSystem = elevatorSystems.getElevatorSystem(userSession())
             elevatorSystem?.let {
                 if (it.pickup(request)) call.respond(HttpStatusCode.Accepted)
                 else call.respond(HttpStatusCode.NotAcceptable)
@@ -79,6 +81,7 @@ fun Application.myApplicationModule() {
         }
 
         post("/step") {
+            val elevatorSystem = elevatorSystems.getElevatorSystem(userSession())
             elevatorSystem?.makeStep() ?: notInitializedError()
             call.respond(HttpStatusCode.OK)
         }
@@ -93,3 +96,5 @@ fun Application.myApplicationModule() {
 private suspend fun PipelineContext<Unit, ApplicationCall>.notInitializedError() {
     call.respond(HttpStatusCode.BadRequest, "System is already initialized")
 }
+
+suspend fun PipelineContext<*, ApplicationCall>.userSession(): String = call.request.headers["user-id"] ?: ""

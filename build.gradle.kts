@@ -54,6 +54,7 @@ kotlin {
             dependencies {
                 implementation(kotlinx("serialization-json:1.5.0"))
                 implementation(kotlinx("coroutines-core:1.7.0"))
+                implementation ("com.benasher44:uuid:0.7.0")
             }
         }
         val commonTest by getting {
@@ -130,8 +131,11 @@ distributions {
     }
 }
 
-tasks.register("stage") {
-    dependsOn(tasks.getByName("installDist"))
-    dependsOn("build")
+tasks.register<Copy>("copyJs"){
+    from("build/distributions/${rootProject.name}.js")
+    to("src/commonMain/resources/${rootProject.name}.js")
 }
+
+
+
 

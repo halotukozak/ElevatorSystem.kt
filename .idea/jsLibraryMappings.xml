@@ -2,5 +2,10 @@
 <project version="4">
   <component name="JavaScriptLibraryMappings">
     <file url="file://$PROJECT_DIR$/src/jsMain" libraries="{Node.js Core}" />
+    <excludedPredefinedLibrary name="ElevatorSystem/build/js/node_modules" />
+    <excludedPredefinedLibrary name="ElevatorSystem/build/js/packages/elevatorSystem-test/node_modules" />
+    <excludedPredefinedLibrary name="ElevatorSystem/build/js/packages/elevatorSystem/node_modules" />
+    <excludedPredefinedLibrary name="ElevatorSystem/build/js/packages_imported/kotlin-test-js-runner/0.0.1/node_modules" />
+    <excludedPredefinedLibrary name="ElevatorSystem/build/js/packages_imported/ktor-ktor-client-core-js-ir/2.0.2/node_modules" />
   </component>
 </project>

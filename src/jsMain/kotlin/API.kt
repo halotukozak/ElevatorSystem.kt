@@ -1,3 +1,4 @@
+import com.benasher44.uuid.uuid4
 import components.errorContext
 import http.InitRequest
 import io.ktor.client.*
@@ -20,10 +21,16 @@ val client = HttpClient {
     }
 }
 
-val serverUrl = "https://elevator-system.herokuapp.com"
+//val serverUrl = "https://elevator-system.herokuapp.com"
+val serverUrl = "https://${location.host}"
+val userId = uuid4().toString()
 
 suspend inline fun <reified T> get(path: String): T {
-    val response = client.get(serverUrl + path)
+    val response = client.get(serverUrl + path){
+        headers {
+            append("user-id", userId)
+        }
+    }
     return if (response.status.isSuccess()) {
         response.body() as T
     } else {
@@ -36,6 +43,9 @@ suspend fun post(path: String, body: Any? = null) = try {
     client.post(serverUrl + path) {
         contentType(ContentType.Application.Json)
         setBody(body)
+        headers {
+            append("user-id", userId)
+        }
     }
 } catch (ex: ResponseException) {
     useContext(errorContext).addLast(ex.message ?: "Unknown error")
@@ -45,6 +55,9 @@ suspend fun delete(path: String, body: Any? = null) = try {
     client.delete(serverUrl + path) {
         contentType(ContentType.Application.Json)
         setBody(body)
+        headers {
+            append("user-id", userId)
+        }
     }
 } catch (ex: ResponseException) {
     useContext(errorContext).addLast(ex.message ?: "Unknown error")

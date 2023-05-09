@@ -60,7 +60,7 @@ val App = FC<Props> {
         }
     }
 
-
+//    AlertService {}
 
     if (elevatorsStatus.isNotEmpty()) {
         ElevatorList {

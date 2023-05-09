@@ -3,3 +3,5 @@
 /build/
 /build/classes/kotlin/jvm/main/
 /src/jsMain/node_modules/
+/gradle/
+/.idea/
