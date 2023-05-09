@@ -1,1 +1,1 @@
-web: java -cp build/libs/elevatorSystem-jvm-1.0-SNAPSHOT.jar me.elevator.application.Server
+web: java -jar build/libs/elevatorSystem-all.jar
