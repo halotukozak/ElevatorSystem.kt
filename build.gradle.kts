@@ -18,7 +18,6 @@ plugins {
     kotlin("plugin.serialization") version "1.8.20"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("io.ktor.plugin") version "2.3.0"
-
 }
 
 group = "me.elevator"
@@ -101,7 +100,6 @@ kotlin {
 application {
     mainClass.set("me.elevator.application.ServerKt")
 }
-
 
 tasks.getByName<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jvmJar"))
