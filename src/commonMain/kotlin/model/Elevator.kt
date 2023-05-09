@@ -31,18 +31,21 @@ data class Elevator(private var currentFloor: Int = 0) {
 
     fun pickup(passenger: Passenger) {
         passengers.pickUp(passenger)
-        if (direction == null) {
-            direction = if (passenger.startingFloor != currentFloor) {
-                if (passenger.startingFloor > currentFloor) UP
-                else DOWN
-            }else{
-                if (passenger.destination > currentFloor) UP
-                else DOWN
+        if (direction == null)
+            direction = when {
+                passenger.startingFloor > currentFloor -> UP
+                passenger.startingFloor < currentFloor -> DOWN
+                else -> when {
+                    passenger.destination > currentFloor -> UP
+                    passenger.destination < currentFloor -> DOWN
+                    else -> null
+                }
             }
-        }
     }
 
     fun makeStep() {
+        passengers.changeState(currentFloor)
+
         when (direction) {
             DOWN -> {
                 currentFloor--
@@ -60,9 +63,10 @@ data class Elevator(private var currentFloor: Int = 0) {
                 maxFloor?.let { if (it <= currentFloor) changeDirection() } ?: stop()
             }
 
-            null -> {}
+            null -> {
+                passengers.dropOff(currentFloor)
+            }
         }
-        passengers.changeState(currentFloor)
     }
 
     private fun changeDirection() {

@@ -21,7 +21,7 @@ import model.Pickup
 fun main() {
     embeddedServer(
         Netty,
-        port = System.getenv("PORT")?.toInt() ?: 8000,
+        port = System.getenv("PORT")?.toInt() ?: 8080,
         module = Application::myApplicationModule
     ).start(wait = true)
 }
@@ -75,8 +75,8 @@ fun Application.myApplicationModule() {
             val request = call.receive<Pickup>()
             val elevatorSystem = elevatorSystems.getElevatorSystem(userSession())
             elevatorSystem?.let {
-                if (it.pickup(request)) call.respond(HttpStatusCode.Accepted)
-                else call.respond(HttpStatusCode.NotAcceptable)
+                it.pickup(request)
+                call.respond(HttpStatusCode.Accepted)
             } ?: notInitializedError()
         }
 
@@ -87,7 +87,7 @@ fun Application.myApplicationModule() {
         }
 
         static("/") {
-            resources("")
+            resources("resources")
         }
 
     }

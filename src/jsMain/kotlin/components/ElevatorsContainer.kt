@@ -1,5 +1,6 @@
 package components
 
+import Direction.Companion.random
 import Direction.DOWN
 import Direction.UP
 import emotion.react.css
@@ -15,9 +16,12 @@ import ringui.*
 import scope
 import step
 import web.cssom.*
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 external interface ElevatorListProps : Props {
     var elevators: List<ElevatorStatus>
+    var passengers: Map<Int, Int>
     var numberOfFloors: Int
     var updateStatus: () -> Unit
 }
@@ -47,12 +51,12 @@ val ElevatorList = FC<ElevatorListProps> { props ->
             Col {
                 xs = 1
                 Button {
-                    css{
-                        fontSize = FontSize.large
-                        height = 50.px
-                    }
-                    +"step ➤"
+                    h2 { +"step ➤" }
                     primary = true
+                    css {
+                        width = Length.Companion.maxContent
+                        height = Length.Companion.maxContent
+                    }
                     onMouseDown = {
                         scope.launch {
                             async { step() }.await()
@@ -104,10 +108,15 @@ val ElevatorList = FC<ElevatorListProps> { props ->
                                 }
                                 Heading {
                                     level = 4
-                                    +("*".repeat(props.elevators.sumOf { e -> e.passengers.count { it.isWaiting && it.startingFloor == i } }))
+                                    +("*".repeat(
+                                        props.elevators.sumOf { e -> e.passengers.count { it.isWaiting && it.startingFloor == i } }
+                                                + (props.passengers[i] ?: 0)
+                                    ))
                                 }
                             }
                         }
+
+
 
                         Row {
                             Col {
@@ -123,14 +132,25 @@ val ElevatorList = FC<ElevatorListProps> { props ->
                                     }
                                 }
                             }
+
                             Col {
                                 css {
                                     marginTop = 0.px
                                     marginLeft = 3.px
                                 }
-                                Heading {
-                                    level = 3
-                                    +"floor $i "
+                                Button {
+                                    text = true
+                                    h2 {
+                                        css { marginBlock = 0.px }
+                                        +"floor $i "
+                                    }
+                                    onMouseDown = {
+                                        scope.launch {
+                                            pickup(i, Random.nextInt(floors), random())
+                                            props.updateStatus()
+
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -139,7 +159,6 @@ val ElevatorList = FC<ElevatorListProps> { props ->
             }
         }
     }
-
     Dialog {
         show = pickingFloor
         className = ClassName("floorDialog")
@@ -154,7 +173,9 @@ val ElevatorList = FC<ElevatorListProps> { props ->
             }
         }
     }
+
 }
+
 
 
 
