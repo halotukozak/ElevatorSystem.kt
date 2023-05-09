@@ -74,7 +74,6 @@ kotlin {
                 implementation(ktorServer("netty"))
 
                 implementation("ch.qos.logback:logback-classic:1.4.6")
-
             }
         }
         val jvmTest by getting
@@ -137,14 +136,4 @@ tasks.register("stage") {
     dependsOn(tasks.getByName("installDist"))
     dependsOn("build")
 }
-ktor {
-    docker {
-        externalRegistry.set(
-            io.ktor.plugin.features.DockerImageRegistry.dockerHub(
-                appName = provider { "ktor-app" },
-                username = providers.environmentVariable("DOCKER_HUB_USERNAME"),
-                password = providers.environmentVariable("DOCKER_HUB_PASSWORD")
-            )
-        )
-    }
-}
+
