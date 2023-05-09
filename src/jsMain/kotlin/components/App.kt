@@ -6,7 +6,6 @@ import kotlinx.coroutines.launch
 import model.ElevatorStatus
 import react.FC
 import react.Props
-import react.useEffectOnce
 import react.useState
 import ringui.*
 import web.cssom.FontFamily
@@ -16,8 +15,6 @@ val App = FC<Props> {
     var elevatorsStatus: List<ElevatorStatus> by useState(emptyList())
     var isInitialized by useState(false)
     var numberOfFloorsInput by useState(0)
-
-    useEffectOnce { scope.launch { reset() } }
 
     Header {
         theme = "light"
@@ -60,7 +57,7 @@ val App = FC<Props> {
         }
     }
 
-
+//    AlertService {}
 
     if (elevatorsStatus.isNotEmpty()) {
         ElevatorList {

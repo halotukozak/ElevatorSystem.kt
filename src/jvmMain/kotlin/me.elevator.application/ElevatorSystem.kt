@@ -5,7 +5,8 @@ import model.ElevatorStatus
 import model.Pickup
 
 class ElevatorSystem(numberOfElevators: Int) {
-    private var elevators: List<Elevator> = List(numberOfElevators) { Elevator() }
+
+    private var elevators: List<Elevator>
 
     fun pickup(pickup: Pickup): Boolean {
         val freeElevators = elevators.filter { it.canPickup() }
@@ -25,4 +26,18 @@ class ElevatorSystem(numberOfElevators: Int) {
     fun makeStep() {
         elevators.forEach { it.makeStep() }
     }
+
+    init {
+        this.elevators = List(numberOfElevators) { Elevator() }
+    }
+}
+
+class ElevatorSystemStorage {
+    private val elevatorSystems = mutableMapOf<String, ElevatorSystem>()
+    fun getElevatorSystem(user: String) = elevatorSystems[user]
+    fun removeElevatorSystem(user: String) = elevatorSystems.remove(user)
+    fun addElevatorSystem(numberOfElevators: Int, userSession: String) {
+        elevatorSystems[userSession] = ElevatorSystem((numberOfElevators))
+    }
+
 }
