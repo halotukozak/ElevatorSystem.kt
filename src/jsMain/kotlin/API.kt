@@ -14,6 +14,7 @@ import model.Elevator
 import model.Passenger
 import model.Pickup
 import react.useContext
+import web.location.location
 
 val client = HttpClient {
     install(ContentNegotiation) {
@@ -21,9 +22,7 @@ val client = HttpClient {
     }
 }
 
-//val serverUrl = "https://elevator-system.herokuapp.com"
-val serverUrl = "http://0.0.0.0:8080"
-//val serverUrl = "${location.protocol}//${location.host}"
+val serverUrl = "${location.protocol}//${location.host}"
 val userId = uuid4().toString()
 
 suspend inline fun <reified T> get(path: String): T {
