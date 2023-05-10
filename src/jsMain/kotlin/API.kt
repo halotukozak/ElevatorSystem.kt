@@ -1,11 +1,8 @@
-
 import com.benasher44.uuid.uuid4
-import components.errorContext
 import http.InitRequest
 import http.StatusResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
-import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
@@ -13,7 +10,6 @@ import io.ktor.serialization.kotlinx.json.*
 import model.Elevator
 import model.Passenger
 import model.Pickup
-import react.useContext
 import web.location.location
 
 val client = HttpClient {
@@ -25,18 +21,16 @@ val client = HttpClient {
 val serverUrl = "${location.protocol}//${location.host}"
 val userId = uuid4().toString()
 
-suspend inline fun <reified T> get(path: String): T {
+suspend inline fun <reified T> get(path: String): T = try {
     val response = client.get(serverUrl + path) {
         headers {
             append("user-id", userId)
         }
     }
-    return if (response.status.isSuccess()) {
-        response.body() as T
-    } else {
-        useContext(errorContext).addLast(response.status.description)
-        error(response)
-    }
+    if (!response.status.isSuccess()) throw IllegalStateException(response.status.description)
+    response.body() as T
+} catch (ex: Exception) {
+    error(ex.message ?: "Unknown error")
 }
 
 suspend fun post(path: String, body: Any? = null) = try {
@@ -47,8 +41,8 @@ suspend fun post(path: String, body: Any? = null) = try {
             append("user-id", userId)
         }
     }
-} catch (ex: ResponseException) {
-    useContext(errorContext).addLast(ex.message ?: "Unknown error")
+} catch (ex: Exception) {
+    error(ex.message ?: "Unknown error")
 }
 
 suspend fun delete(path: String, body: Any? = null) = try {
@@ -59,8 +53,8 @@ suspend fun delete(path: String, body: Any? = null) = try {
             append("user-id", userId)
         }
     }
-} catch (ex: ResponseException) {
-    useContext(errorContext).addLast(ex.message ?: "Unknown error")
+} catch (ex: Exception) {
+    error(ex.message ?: "Unknown error")
 }
 
 
@@ -70,6 +64,10 @@ suspend fun init(numberOfElevators: Int, numberOfFloors: Int) {
 
 suspend fun getStatus(): StatusResponse = get(Elevator.path)
 suspend fun reset() = delete("/reset")
+
+suspend fun enableDormitoryMode() = post("/dormitoryMode")
+
+
 suspend fun pickup(floor: Int, destination: Int, direction: Direction) =
     post(Elevator.pickupPath, Pickup(Passenger(floor, destination), floor, direction))
 

@@ -12,11 +12,12 @@ import kotlin.math.abs
 
 @Serializable
 data class Elevator(private var currentFloor: Int = 0) {
-    val id: Int = lastId++
+    private val id: Int = lastId++
 
     @Transient
     private val passengers = ElevatorDequePQ()
     private var direction: Direction? = null
+    private var isBroken = false
 
 
     companion object {
@@ -26,8 +27,19 @@ data class Elevator(private var currentFloor: Int = 0) {
         var lastId = 1
     }
 
-    fun status(): ElevatorStatus = ElevatorStatus(id, currentFloor, passengers.all())
-    fun canPickup() = passengers.size() < Config.maxElevatorSize
+    fun status(): ElevatorStatus = ElevatorStatus(id, currentFloor, passengers.all(), isBroken)
+    fun canPickup() = !isBroken && passengers.size() < Config.maxElevatorSize
+    fun makeBroken() {
+        if (isEmpty()) isBroken = true
+    }
+
+    fun repair() {
+        isBroken = false
+    }
+
+    private fun isEmpty() = passengers.isEmpty()
+
+    fun passengers() = passengers.all()
 
     fun pickup(passenger: Passenger) {
         passengers.pickUp(passenger)

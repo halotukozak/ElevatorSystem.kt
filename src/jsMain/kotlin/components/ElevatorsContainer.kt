@@ -21,7 +21,7 @@ import kotlin.random.nextInt
 
 external interface ElevatorListProps : Props {
     var elevators: List<ElevatorStatus>
-    var passengers: Map<Int, Int>
+    var waitingPassengers: Map<Int, Int>
     var numberOfFloors: Int
     var updateStatus: () -> Unit
 }
@@ -38,13 +38,15 @@ val ElevatorList = FC<ElevatorListProps> { props ->
             css {
                 borderBottom = Border(1.px, LineStyle.solid)
             }
-            props.elevators.forEach { item ->
+            props.elevators.forEach { elevator ->
                 Col {
                     h2 {
                         css {
                             fontSize = FontSize.xxLarge
+                            width = 0.px
+                            if (elevator.isBroken) color = Color("#c22731")
                         }
-                        +"${item.currentLevel}"
+                        +if (elevator.isBroken) "service" else "${elevator.currentLevel}"
                     }
                 }
             }
@@ -73,14 +75,14 @@ val ElevatorList = FC<ElevatorListProps> { props ->
                 css {
                     borderBottom = Border(1.px, LineStyle.solid)
                 }
-                props.elevators.forEach { item ->
+                props.elevators.forEach { elevator ->
                     Col {
-                        if (i == item.currentLevel)
+                        if (i == elevator.currentLevel)
                             Heading {
                                 css {
                                     width = 0.px
                                 }
-                                +("[" + ("*".repeat(item.passengers.count { !it.isWaiting })) + "]")
+                                +(if (elevator.isBroken) "[X]" else ("[" + ("*".repeat(elevator.passengers.count { !it.isWaiting })) + "]"))
                             }
                     }
                 }
@@ -108,10 +110,7 @@ val ElevatorList = FC<ElevatorListProps> { props ->
                                 }
                                 Heading {
                                     level = 4
-                                    +("*".repeat(
-                                        props.elevators.sumOf { e -> e.passengers.count { it.isWaiting && it.startingFloor == i } }
-                                                + (props.passengers[i] ?: 0)
-                                    ))
+                                    +("*".repeat(props.waitingPassengers[i] ?: 0))
                                 }
                             }
                         }
@@ -173,7 +172,7 @@ val ElevatorList = FC<ElevatorListProps> { props ->
             }
         }
     }
-
+    if (props.elevators.all { it.isBroken }) AlertService.loadingMessage("There is no working elevators. Make step and hope.", 8000)
 }
 
 

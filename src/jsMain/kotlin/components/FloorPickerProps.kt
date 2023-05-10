@@ -1,11 +1,11 @@
 package components
 
 import emotion.react.css
-import kotlinx.coroutines.selects.select
 import react.FC
 import react.Props
 import ringui.*
 import web.cssom.ClassName
+import web.cssom.FontSize
 
 external interface FloorPickerProps : Props {
     var floorsRange: IntRange
@@ -23,11 +23,14 @@ val FloorPicker = FC<FloorPickerProps> { props ->
             Grid {
                 props.floorsRange.reversed().chunked(3).forEach { nrs ->
                     Row {
-                        center = RowPosition.xs
+                        around = RowPosition.xs
                         nrs.forEach { nr ->
                             Col {
                                 Button {
+                                    short = true
+                                    css { fontSize = FontSize.medium }
                                     +nr.toString()
+
                                     onMouseDown = { props.onSubmit(nr) }
                                 }
                             }

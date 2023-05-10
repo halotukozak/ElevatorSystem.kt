@@ -4,11 +4,14 @@ import http.StatusResponse
 import model.Elevator
 import model.Pickup
 import java.util.*
+import kotlin.random.Random
 
 class ElevatorSystem(numberOfElevators: Int) {
 
     private var elevators: List<Elevator>
     private val waitingPickups = LinkedList<Pickup>()
+
+    private var dormitoryModeEnabled = false
 
     init {
         this.elevators = List(numberOfElevators) { Elevator() }
@@ -18,10 +21,31 @@ class ElevatorSystem(numberOfElevators: Int) {
         waitingPickups.add(pickup)
     }
 
-    fun status(): StatusResponse= StatusResponse(elevators.map { it.status() },
-        waitingPickups.groupingBy { it.passenger.startingFloor }.eachCount())
+    fun status(): StatusResponse {
+        val waitingPassengers = waitingPickups.groupingBy { it.passenger.startingFloor }.eachCount().toMutableMap()
+
+        elevators.flatMap { it.passengers() }.filter { it.isWaiting }.groupingBy { it.startingFloor }.eachCount()
+            .forEach { (floor, count) -> waitingPassengers[floor] = waitingPassengers.getOrDefault(floor, 0) + count }
+
+        return StatusResponse(
+            elevators.map { it.status() },
+            waitingPassengers
+        )
+    }
+
+    private fun breakRandomElevator() {
+        if (Random.nextInt(0, 10) == 1) elevators[Random.nextInt(0, elevators.size)].makeBroken()
+    }
+    private fun repairRandomElevator() {
+        if (Random.nextInt(0, 10) == 1) elevators[Random.nextInt(0, elevators.size)].repair()
+    }
 
     fun makeStep() {
+        if (dormitoryModeEnabled) {
+            repairRandomElevator()
+            breakRandomElevator()
+        }
+
         val freeElevators = elevators.filter { it.canPickup() }.toMutableList()
         while (freeElevators.isNotEmpty() && waitingPickups.isNotEmpty()) {
             val pickup = waitingPickups.poll()
@@ -31,6 +55,10 @@ class ElevatorSystem(numberOfElevators: Int) {
             if (!elevator.canPickup()) freeElevators.remove(elevator)
         }
         elevators.forEach { it.makeStep() }
+    }
+
+    fun enableDormitoryMode() {
+        dormitoryModeEnabled = true
     }
 
 

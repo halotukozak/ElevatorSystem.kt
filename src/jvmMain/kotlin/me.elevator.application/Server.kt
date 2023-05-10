@@ -48,6 +48,10 @@ fun Application.myApplicationModule() {
     install(Compression) { gzip() }
 
     routing {
+        fun PipelineContext<Unit, ApplicationCall>.userElevatorSystem(): ElevatorSystem? =
+            elevatorSystems.getElevatorSystem(userSession())
+
+
         get("/") {
             call.respondText(
                 this::class.java.classLoader.getResource("index.html")!!.readText(),
@@ -61,8 +65,7 @@ fun Application.myApplicationModule() {
         }
 
         get(Elevator.path) {
-            val elevatorSystem = elevatorSystems.getElevatorSystem(userSession())
-            call.respond(elevatorSystem?.status() ?: notInitializedError())
+            call.respond(userElevatorSystem()?.status() ?: notInitializedError())
         }
 
         post(Elevator.initPath) {
@@ -73,16 +76,20 @@ fun Application.myApplicationModule() {
 
         post(Elevator.pickupPath) {
             val request = call.receive<Pickup>()
-            val elevatorSystem = elevatorSystems.getElevatorSystem(userSession())
-            elevatorSystem?.let {
+            userElevatorSystem()?.let {
                 it.pickup(request)
                 call.respond(HttpStatusCode.Accepted)
             } ?: notInitializedError()
         }
 
         post("/step") {
-            val elevatorSystem = elevatorSystems.getElevatorSystem(userSession())
-            elevatorSystem?.makeStep() ?: notInitializedError()
+            userElevatorSystem()?.makeStep() ?: notInitializedError()
+            call.respond(HttpStatusCode.OK)
+        }
+
+
+        post("/dormitoryMode"){
+            userElevatorSystem()?.enableDormitoryMode() ?: notInitializedError()
             call.respond(HttpStatusCode.OK)
         }
 
@@ -94,7 +101,7 @@ fun Application.myApplicationModule() {
 }
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.notInitializedError() {
-    call.respond(HttpStatusCode.BadRequest, "System is already initialized")
+    call.respond(HttpStatusCode.BadRequest, "System is not initialized")
 }
 
-suspend fun PipelineContext<*, ApplicationCall>.userSession(): String = call.request.headers["user-id"] ?: ""
+fun PipelineContext<*, ApplicationCall>.userSession(): String = call.request.headers["user-id"] ?: ""

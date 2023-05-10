@@ -19,6 +19,7 @@ val App = FC<Props> {
     var waitingPassengers: Map<Int, Int> by useState(mapOf())
     var isInitialized by useState(false)
     var numberOfFloorsInput by useState(0)
+    var dormitoryModeEnabled by useState(false)
 
     Header {
         theme = "light"
@@ -50,7 +51,9 @@ val App = FC<Props> {
             Link {
                 onClick = {
                     scope.launch {
+                        reset()
                         isInitialized = false
+                        dormitoryModeEnabled = false
                         val status = getStatus()
                         elevatorsStatus = status.elevatorsStatus
                         waitingPassengers = status.waitingPassengers
@@ -82,19 +85,23 @@ val App = FC<Props> {
     if (elevatorsStatus.isNotEmpty()) {
         ElevatorList {
             elevators = elevatorsStatus
-            passengers = waitingPassengers
+            this.waitingPassengers = waitingPassengers
             updateStatus = {
                 scope.launch {
                     async {
                         val status = getStatus()
                         elevatorsStatus = status.elevatorsStatus
                         waitingPassengers = status.waitingPassengers
+                        if (!dormitoryModeEnabled && waitingPassengers.values.any { it > 10 }) {
+                            AlertService.warning("Dormitory mode enabled", 4000)
+                            dormitoryModeEnabled = true
+                            enableDormitoryMode()
+                        }
                     }.await()
                 }
             }
             numberOfFloors = numberOfFloorsInput
         }
-
         MyFooter {}
     }
 }
