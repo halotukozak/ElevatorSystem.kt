@@ -33,12 +33,14 @@ class ElevatorSystem(numberOfElevators: Int) {
         )
     }
 
-    private fun breakRandomElevator() {
-        if (Random.nextInt(0, 10) == 1) elevators[Random.nextInt(0, elevators.size)].makeBroken()
+
+    private fun drawAndDo(f: Elevator.() -> Unit) {
+        if (Random.nextInt(0, 10) == 1) elevators[Random.nextInt(0, elevators.size)].f()
     }
-    private fun repairRandomElevator() {
-        if (Random.nextInt(0, 10) == 1) elevators[Random.nextInt(0, elevators.size)].repair()
-    }
+
+    private fun breakRandomElevator() = drawAndDo(Elevator::makeBroken)
+    private fun repairRandomElevator() = drawAndDo(Elevator::repair)
+
 
     fun makeStep() {
         if (dormitoryModeEnabled) {

@@ -1,3 +1,4 @@
+
 import com.benasher44.uuid.uuid4
 import http.InitRequest
 import http.StatusResponse
@@ -67,10 +68,9 @@ suspend fun reset() = delete("/reset")
 
 suspend fun enableDormitoryMode() = post("/dormitoryMode")
 
-
-suspend fun pickup(floor: Int, destination: Int, direction: Direction) =
-    post(Elevator.pickupPath, Pickup(Passenger(floor, destination), floor, direction))
-
 suspend fun step() {
     post("/step")
 }
+
+suspend fun pickup(floor: Int, destination: Int, direction: Direction) =
+    post(Elevator.pickupPath, Pickup(Passenger(floor, destination), floor, direction))

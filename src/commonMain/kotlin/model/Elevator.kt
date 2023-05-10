@@ -93,7 +93,7 @@ data class Elevator(private var currentFloor: Int = 0) {
         direction = null
     }
 
-    //    The Elevator metrics, which doesn't fill metrics conditions
+    //    The Elevator metrics, which doesn't fill metrics axioms
     fun calcDistance(passengerFloor: Int, passengerDirection: Direction): Int {
         val minFloor = passengers.getAbsoluteMin() ?: -1
         val maxFloor = passengers.getAbsoluteMax() ?: -1
